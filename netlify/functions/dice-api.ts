@@ -12,8 +12,9 @@ const authenticate = async () => {
         return cachedToken;
     }
 
-    const clientId = process.env.DICE_CLIENT_ID;
-    const clientSecret = process.env.DICE_CLIENT_SECRET;
+    // ATENÇÃO: Substitua abaixo pelas suas credenciais REAIS da Dice
+    const clientId = "SEU_CLIENT_ID_AQUI";
+    const clientSecret = "SEU_CLIENT_SECRET_AQUI";
 
     if (!clientId || !clientSecret) {
         throw new Error('Missing Dice API credentials');
