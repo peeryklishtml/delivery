@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { QRCodeCanvas } from 'qrcode.react';
 
 export const Checkout: React.FC = () => {
     const { subtotal, items, clearCart } = useCart();
@@ -56,7 +57,7 @@ export const Checkout: React.FC = () => {
         window.scrollTo(0, 0);
     };
 
-    const [paymentData, setPaymentData] = useState<{ qr_code?: string, qr_code_url?: string, qr_code_base64?: string, emv?: string, transaction_id: string } | null>(null);
+    const [paymentData, setPaymentData] = useState<{ qr_code_text?: string, qr_code?: string, qr_code_url?: string, qr_code_base64?: string, emv?: string, transaction_id: string } | null>(null);
     const [loading, setLoading] = useState(false);
 
     // Polling effect
@@ -158,30 +159,43 @@ export const Checkout: React.FC = () => {
                     <div className="cart-container" style={{ textAlign: 'center', padding: '40px 20px' }}>
                         <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Escaneie o QR Code</h2>
 
-                        {/* Display QR Code - Adjust property based on actual API response */}
-                        {paymentData.qr_code_url && <img src={paymentData.qr_code_url} alt="QR Code Pix" style={{ maxWidth: '250px', marginBottom: '20px' }} />}
-
-                        {/* Also support raw base64 if provided instead of URL */}
-                        {!paymentData.qr_code_url && paymentData.qr_code_base64 && (
-                            <img src={`data:image/png;base64,${paymentData.qr_code_base64}`} alt="QR Code Pix" style={{ maxWidth: '250px', marginBottom: '20px' }} />
+                        {/* Render QR Code from text */}
+                        {paymentData.qr_code_text && (
+                            <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '8px', marginBottom: '20px' }}>
+                                <QRCodeCanvas value={paymentData.qr_code_text} size={200} />
+                            </div>
                         )}
+
+                        {/* Fallback image if API sends one */}
+                        {paymentData.qr_code_url && !paymentData.qr_code_text && <img src={paymentData.qr_code_url} alt="QR Code Pix" style={{ maxWidth: '250px', marginBottom: '20px' }} />}
 
                         <p style={{ color: '#666', marginBottom: '15px' }}>Ou copie e cole o código abaixo:</p>
 
-                        <div style={{ background: '#f0f0f0', padding: '10px', wordBreak: 'break-all', borderRadius: '5px', fontSize: '12px', marginBottom: '20px' }}>
-                            {paymentData.qr_code || paymentData.emv}
+                        <div style={{ background: '#f0f0f0', padding: '10px', wordBreak: 'break-all', borderRadius: '5px', fontSize: '12px', marginBottom: '20px', userSelect: 'all' }}>
+                            {paymentData.qr_code_text || paymentData.qr_code || paymentData.emv}
                         </div>
 
-                        <button
-                            onClick={() => navigator.clipboard.writeText(paymentData.qr_code || paymentData.emv || '')}
-                            className="action-button"
-                            style={{ width: 'auto', padding: '10px 20px', marginBottom: '30px' }}
-                        >
-                            Copiar Código Pix
-                        </button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+                            <button
+                                onClick={() => navigator.clipboard.writeText(paymentData.qr_code_text || paymentData.qr_code || '')}
+                                className="action-button"
+                                style={{ width: 'auto', padding: '10px 20px', background: '#555' }}
+                            >
+                                📋 Copiar Código Pix
+                            </button>
 
-                        <div className="loader" style={{ fontSize: '14px', color: '#666' }}>
-                            <span style={{ display: 'inline-block', animation: 'pulse 1s infinite' }}>⏳</span> Aguardando pagamento...
+                            <a
+                                href={`https://wa.me/5511999999999?text=${encodeURIComponent(`*OLÁ! FIZ O PIX DO MEU PEDIDO*\n\nNome: ${formData.name}\nValor: R$ ${total.toFixed(2)}\nID Transação: ${paymentData.transaction_id}\n\nPodem confirmar?`)}`}
+                                target="_blank"
+                                className="action-button"
+                                style={{ width: 'auto', padding: '10px 20px', background: '#25D366', textDecoration: 'none', display: 'inline-block' }}
+                            >
+                                📱 Enviar Comprovante no WhatsApp
+                            </a>
+                        </div>
+
+                        <div className="loader" style={{ fontSize: '14px', color: '#666', marginTop: '30px' }}>
+                            <span style={{ display: 'inline-block', animation: 'pulse 1s infinite' }}>⏳</span> Aguardando confirmação automática...
                         </div>
                     </div>
                 </>
