@@ -2,7 +2,7 @@ export interface OptionItem {
     name: string;
     price?: number;
     description?: string;
-    category?: 'tradicionais' | 'especiais' | 'premium' | 'light' | 'doces' | 'bebidas' | 'adicionais' | 'pastel' | 'pao' | 'ponto' | 'molho';
+    category?: 'tradicionais' | 'especiais' | 'premium' | 'light' | 'doces' | 'bebidas' | 'adicionais' | 'pastel' | 'pao' | 'ponto' | 'molho' | 'geral';
     count?: number;
 }
 
@@ -126,7 +126,8 @@ const adicionaisLanche: OptionItem[] = [
     { name: 'Molho Barbecue', price: 2.00, category: 'adicionais' },
     { name: 'Salada Extra', price: 2.00, category: 'adicionais' },
     { name: 'Picles', price: 2.00, category: 'adicionais' },
-    { name: 'Calabresa Fatiada', price: 3.00, category: 'adicionais' }
+    { name: 'Calabresa Fatiada', price: 3.00, category: 'adicionais' },
+    { name: 'Cebola Roxa', price: 1.00, category: 'adicionais' }
 ];
 
 const tiposPao: OptionItem[] = [
@@ -165,6 +166,13 @@ const bebidasUpsell: OptionItem[] = [
     { name: 'Schweppes Citrus', price: 7.00, category: 'bebidas' }
 ];
 
+const opcoesBebida: OptionItem[] = [
+    { name: 'Gelar Bem', category: 'geral' },
+    { name: 'Sem Gelo', category: 'geral' },
+    { name: 'Com Limão', category: 'geral' },
+    { name: 'Com Copo Descartável', category: 'geral' }
+];
+
 // --- GROUPS ---
 
 // Pizza Groups
@@ -187,6 +195,9 @@ const groupMolhos: OptionGroup = { title: 'Molhos Especiais', items: molhos, typ
 
 // Common
 const groupBebidas: OptionGroup = { title: 'Compre Junto (Bebidas Geladinhas)', items: bebidasUpsell, type: 'checkbox', required: false, min: 0, max: 5 };
+
+// Bebidas Options (User requested ALL items have options)
+const groupBebidaObs: OptionGroup = { title: 'Observações da Bebida', items: opcoesBebida, type: 'checkbox', required: false, min: 0, max: 4 };
 
 
 // --- MAPPING ---
@@ -221,7 +232,7 @@ export const productOptions: ProductOptionsMap = {
 
     'combo-10-xsimples': [groupMolhos, groupBebidas],
 
-    // --- LANCHES (All share full gourmet options now due to user demand for variety) ---
+    // --- LANCHES ---
     'terca-vip-gourmet': [groupPao, groupPonto, groupAdicionais, groupMolhos, groupBebidas],
     'gourmet-kids': [groupPao, groupPonto, groupAdicionais, groupMolhos, groupBebidas],
     'gourmet-da-casa': [groupPao, groupPonto, groupAdicionais, groupMolhos, groupBebidas],
@@ -229,7 +240,7 @@ export const productOptions: ProductOptionsMap = {
     'gourmet-garrote': [groupPao, groupPonto, groupAdicionais, groupMolhos, groupBebidas],
     'gourmet-cheese': [groupPao, groupPonto, groupAdicionais, groupMolhos, groupBebidas],
 
-    'x-burguer': [groupAdicionais, groupMolhos, groupBebidas], // Tradicionais don't usually have bread choice
+    'x-burguer': [groupAdicionais, groupMolhos, groupBebidas],
     'x-simples': [groupAdicionais, groupMolhos, groupBebidas],
     'x-salada': [groupAdicionais, groupMolhos, groupBebidas],
     'x-bacon': [groupAdicionais, groupMolhos, groupBebidas],
@@ -264,12 +275,12 @@ export const productOptions: ProductOptionsMap = {
     'pastel-banana-nevada': [groupBebidas],
 
     // --- BEBIDAS ---
-    'coca-2l': [],
-    'kuat-2l': [],
-    'coca-600': [],
-    'fanta-lata': [],
-    'coca-lata': [],
-    'guarana-lata': [],
-    'coca-200': [],
-    'agua-gas': [],
+    'coca-2l': [groupBebidaObs],
+    'kuat-2l': [groupBebidaObs],
+    'coca-600': [groupBebidaObs],
+    'fanta-lata': [groupBebidaObs],
+    'coca-lata': [groupBebidaObs],
+    'guarana-lata': [groupBebidaObs],
+    'coca-200': [groupBebidaObs],
+    'agua-gas': [groupBebidaObs],
 };
