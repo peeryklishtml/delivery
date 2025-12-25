@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
+import { trackFacebookEvent } from '../lib/facebook';
 
 export const Checkout: React.FC = () => {
     const { subtotal, items, clearCart } = useCart();
     const navigate = useNavigate();
     const [step, setStep] = useState(1); // 1: Address, 2: Payment
+
+    useEffect(() => {
+        // Track InitiateCheckout when entering checkout
+        if (items.length > 0) {
+            trackFacebookEvent('InitiateCheckout', {}, {
+                currency: 'BRL',
+                value: subtotal,
+                num_items: items.length
+            });
+        }
+    }, [items.length, subtotal]);
 
     // Using simple state instead of separate routes to keep SPA feel while mimicing pages
     const [formData, setFormData] = useState({
@@ -79,6 +91,22 @@ export const Checkout: React.FC = () => {
                         clearCart();
                         // Redirect to success / WhatsApp with confirmation
                         const message = `*PEDIDO CONFIRMADO (PIX)*\nCliente: ${formData.name}\nTotal: R$ ${total.toFixed(2)}\nID Transação: ${paymentData.transaction_id}`;
+
+                        // Track Purchase (Pix)
+                        trackFacebookEvent('Purchase', {
+                            email: formData.email,
+                            phone: formData.phone,
+                            firstName: formData.name.split(' ')[0],
+                            lastName: formData.name.split(' ').slice(1).join(' '),
+                            city: formData.city,
+                            state: formData.state,
+                            zip: formData.cep
+                        }, {
+                            currency: 'BRL',
+                            value: total,
+                            transaction_id: paymentData.transaction_id
+                        });
+
                         window.location.href = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
                     }
                 } catch (e) {
@@ -93,6 +121,22 @@ export const Checkout: React.FC = () => {
         if (method === 'delivery') {
             const message = `*NOVO PEDIDO*\nCliente: ${formData.name}\nEndereço: ${formData.address_street}, ${formData.address_number} - ${formData.neighborhood}\nTotal: R$ ${total.toFixed(2)}\nPagamento: Entrega (Dinheiro/Cartão)`;
             const waLink = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+
+            // Track Purchase (Delivery)
+            trackFacebookEvent('Purchase', {
+                email: formData.email,
+                phone: formData.phone,
+                firstName: formData.name.split(' ')[0],
+                lastName: formData.name.split(' ').slice(1).join(' '),
+                city: formData.city,
+                state: formData.state,
+                zip: formData.cep
+            }, {
+                currency: 'BRL',
+                value: total,
+                transaction_id: `DELIVERY-${Date.now()}` // Generate temporary ID for Delivery
+            });
+
             clearCart();
             window.location.href = waLink;
             return;
