@@ -198,19 +198,32 @@ export const Product: React.FC = () => {
                                 </div>
 
                                 <div className="options-list">
-                                    {/* Filter items by category logic - simulated here since our data might not have categories tagged explicitly in the generated productOptions.ts yet, assuming flattened list.
-                                        If productOptions.ts was generated flat, we need to artificially filter or show all. 
-                                        Critically: In legacy, flavors were in separate arrays variables. 
-                                        For this restoration, we will attempt to filter if data allows, otherwise show all.
-                                    */}
-                                    {options[1].items.map(item => {
-                                        // Mock category filtering if not present in data
-                                        // For now show all to avoid missing items, since extraction might have been flat
-                                        return renderOptionItem(options[1], item);
-                                    })}
+                                    {options[1].items
+                                        .filter(item => {
+                                            if (!item.category) return true; // Show uncategorized or if logic matches
+                                            return item.category === pizzaCategory;
+                                        })
+                                        .map(item => renderOptionItem(options[1], item))}
                                 </div>
                             </section>
                         </div>
+
+                        {/* STEP 3 (Optional): BEBIDAS / ORDER BUMP if exists */}
+                        {
+                            options.length > 2 && (
+                                <div className={currentStep === 3 ? 'step active' : 'step'}>
+                                    <section className="options-section">
+                                        <div className="section-header">
+                                            <h2>{options[2].title}</h2>
+                                            <div className="rules"><span className="tag">Opcional</span></div>
+                                        </div>
+                                        <div className="options-list">
+                                            {options[2].items.map(item => renderOptionItem(options[2], item))}
+                                        </div>
+                                    </section>
+                                </div>
+                            )
+                        }
                     </>
                 ) : (
                     // NORMAL FLOW
@@ -235,7 +248,7 @@ export const Product: React.FC = () => {
                         )}
                     </>
                 )}
-            </main>
+            </main >
 
             <footer className="product-footer">
                 <div className="price-info">
@@ -249,6 +262,6 @@ export const Product: React.FC = () => {
                     {isPizzaFlow && currentStep === 1 ? 'PRÓXIMO' : 'ADICIONAR'}
                 </button>
             </footer>
-        </div>
+        </div >
     );
 };
