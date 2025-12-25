@@ -13,8 +13,8 @@ const authenticate = async () => {
     }
 
     // ATENÇÃO: Substitua abaixo pelas suas credenciais REAIS da Dice
-    const clientId = "SEU_CLIENT_ID_AQUI";
-    const clientSecret = "SEU_CLIENT_SECRET_AQUI";
+    const clientId = "dice_live_0b5adcb282e250521856f84f060c749d";
+    const clientSecret = "dicesk_live_27f3d80af88c9ee279d5733edfcbc9828391fb4eccbbaf89";
 
     if (!clientId || !clientSecret) {
         throw new Error('Missing Dice API credentials');
@@ -130,3 +130,4 @@ export const handler: Handler = async (event, context) => {
         };
     }
 };
+
