@@ -293,13 +293,13 @@ export const Checkout: React.FC = () => {
                         <div className="payment-options">
                             <h2>Qual a forma de pagamento?</h2>
                             <div className="options-container">
-                                <div onClick={() => handlePayment('delivery')} className="payment-option">
+                                <button type="button" onClick={() => handlePayment('delivery')} className="payment-option" style={{ fontFamily: 'inherit', fontSize: 'inherit' }}>
                                     {/* Icons would be clearer with FontAwesome or SVG maps, using text for now or simple SVG */}
                                     {/* Simple Wallet Icon */}
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg>
                                     <span>Pagar na Entrega</span>
-                                </div>
-                                <button onClick={() => handlePayment('pix')} className="payment-option" disabled={loading} style={{ opacity: loading ? 0.7 : 1, border: 'none', background: 'none' }}>
+                                </button>
+                                <button type="button" onClick={() => handlePayment('pix')} className="payment-option" disabled={loading} style={{ opacity: loading ? 0.7 : 1, fontFamily: 'inherit', fontSize: 'inherit' }}>
                                     {/* PIX Icon */}
                                     {loading ? (
                                         <div style={{ margin: '0 auto', width: '24px', height: '24px', border: '3px solid #ccc', borderTop: '3px solid var(--primary-red)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
