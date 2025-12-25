@@ -8,7 +8,7 @@ export const initFacebookPixel = () => {
     // Use your actual Pixel ID here or strictly rely on the backend one for CAPI, 
     // but client-side pixel needs the ID to initialize `fbq`.
     // Ideally this matches the one in the backend function.
-    const PIXEL_ID = 'SEU_ID_DO_PIXEL_AQUI';
+    const PIXEL_ID = '1487200669007426';
 
     (function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
